@@ -1,0 +1,33 @@
+---
+- name: Run terraform main.tf to create inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Terraform init and apply
+      cloud.terraform.terraform:
+        project_path: "./"
+        variables_files:
+          - secret.tfvars
+        state: present
+        force_init: true
+    
+    - meta: refresh_inventory
+  
+- name: Install nginx on remote host
+  hosts: nginx
+  become: true
+  gather_facts: false
+  tasks:
+    - wait_for_connection:
+
+    - setup:
+
+    - name: Install nginx
+      package:
+        name: nginx
+        state: present
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
